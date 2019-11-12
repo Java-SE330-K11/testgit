@@ -6,6 +6,7 @@
 package explorer;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.io.File;
@@ -17,6 +18,12 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.Icon;
+import javax.swing.JTable;
+import javax.swing.filechooser.FileSystemView;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 /**
  *
@@ -30,6 +37,32 @@ public class MainForm extends javax.swing.JFrame {
     public MainForm() {
         initComponents();
 
+    }
+    class Render extends DefaultTableCellRenderer{
+        Map<Integer,Icon> icons;
+        Map<Integer,String> str;
+    public Render(Map<Integer,Icon> icons,Map<Integer,String> str) { 
+        this.icons=icons;
+        this.str=str;
+    }
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
+        {
+            super.getTableCellRendererComponent(table,value,isSelected,hasFocus,row,column);
+            this.setOpaque(true);
+            this.setIcon(icons.get(row));
+        this.setText(str.get(row));
+        this.setBackground(Color.WHITE);
+        if (isSelected)
+        {
+            setBackground(table.getSelectionBackground());
+        }
+        else
+        {
+            setBackground(table.getBackground());
+        }
+        return this;
+        }
     }
 
     /**
@@ -332,6 +365,8 @@ public class MainForm extends javax.swing.JFrame {
 
     void ShowInTable(File[] paths)
     {
+        Map<Integer,Icon> icons=new HashMap<Integer,Icon>();
+        Map<Integer,String> str=new HashMap<Integer,String>();
         //Table.re
         int n=paths.length;
         Object row[]=new Object[4];
@@ -346,7 +381,10 @@ public class MainForm extends javax.swing.JFrame {
         for(int i=0;i<n;i++)
             if(paths[i].isDirectory())
             {
+                
+                Icon ic=FileSystemView.getFileSystemView().getSystemIcon(paths[i]);             
                 row[0]=paths[i].getName();
+                //System.out.println(paths[i]+"  "+saveSelectedNode.toString());
                 Date d = new Date(paths[i].lastModified());
                 SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy   HH:mm:ss");
                 String strDate = formatter.format(d);
@@ -358,7 +396,8 @@ public class MainForm extends javax.swing.JFrame {
         for(int i=0;i<n;i++)
             if(paths[i].isFile())
             {
-                row[0]=paths[i].getName();
+                //row[0]=paths[i].getName();
+                
                 Date d = new Date(paths[i].lastModified());
                 SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy   HH:mm:ss");
                 String strDate = formatter.format(d);
@@ -367,7 +406,14 @@ public class MainForm extends javax.swing.JFrame {
                 row[3]=paths[i].length()/1000+" KB";
                 tableModel.addRow(row);
             }
-        
+        for(int i=0;i<n;i++)
+        {
+            icons.put(i, FileSystemView.getFileSystemView().getSystemIcon(paths[i]));
+            str.put(i,paths[i].getName());
+            /*String path=paths[i].getAbsolutePath();
+            System.out.println(path);*/
+        }
+        Table.getColumnModel().getColumn(0).setCellRenderer(new Render(icons,str));
     }
     
     private void loadTree()
