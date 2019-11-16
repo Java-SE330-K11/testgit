@@ -194,6 +194,9 @@
               <Dimension value="[70, 40]"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnCopyMouseClicked"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnCut">
           <Properties>
@@ -228,6 +231,9 @@
               <Dimension value="[70, 40]"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnPasteActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnDelete">
           <Properties>
@@ -406,6 +412,9 @@
                   <TableHeader reorderingAllowed="false" resizingAllowed="true"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="TableMouseClicked"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

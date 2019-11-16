@@ -14,7 +14,10 @@ import javax.swing.tree.DefaultTreeModel;
  * @author User
  */
 public class NewJFrame extends javax.swing.JFrame {
-
+    private File coppy;
+    private File paste;
+    public DefaultMutableTreeNode tmp;
+    
     /**
      * Creates new form NewJFrame
      */
@@ -84,7 +87,7 @@ public class NewJFrame extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
 
         File[] paths;
@@ -98,6 +101,7 @@ public class NewJFrame extends javax.swing.JFrame {
         DefaultMutableTreeNode root=(DefaultMutableTreeNode)model.getRoot();
         DefaultMutableTreeNode selectedNode=(DefaultMutableTreeNode) jTree1.getLastSelectedPathComponent();
         //System.out.println(selectedNode.toString());
+        System.out.println(selectedNode.toString());
         for(File path:paths)
         {
                 File[] abc=path.listFiles();
