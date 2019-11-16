@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.datatransfer.Clipboard;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -396,46 +397,82 @@ public class MainForm extends javax.swing.JFrame {
     
     private void btnPasteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPasteActionPerformed
         // TODO add your handling code here:
-//         if(copy)
-//         {
-//             String pasteS = saveSelectedNode.toString();
-//              tmpS = pasteS.split("\\\\");
-//            String tmp = new String();
-//            for (int i=0;i<tmpS.length;i++)
-//            {
-//                tmp += tmpS[i] + "\\\\" ;
-//            }
-//             tmp+=tmpF;
-//             System.out.println(tmp);
-//             filePatsePath = new File(tmp);
-//             if(fileCoppyPath.isFile()){
-//                 try{
-//                     FileUtils.copyFile(fileCoppyPath, filePatsePath); 
-//                     loadTableWhenAction();
-//                    }  
-//                 catch (IOException e){
-//                         System.out.println("Nope");
-//                    }
-//             }
-//             else if(fileCoppyPath.isDirectory()){
-//                 try{
-//                     FileUtils.copyDirectory(fileCoppyPath, filePatsePath); 
-//                     loadTableWhenAction();
-//                    }  
-//                 catch (IOException e){
-//                         System.out.println("Nope");
-//                    }
-//             }
-//         }
-        File s1 = new File("D:\\Local1\\Test.docx");
-        File s2 = new File("..\\clipboard\\Test.docx");
-        try{
-        FileUtils.copyFile(s1,s2);
-        }
-        catch (IOException e)
-        {
-            System.out.println("Nope");
-        }
+         if(copy)
+         {
+             String pasteS = saveSelectedNode.toString();
+              tmpS = pasteS.split("\\\\");
+            String tmp = new String();
+            for (int i=0;i<tmpS.length;i++)
+            {
+                tmp += tmpS[i] + "\\\\" ;
+            }
+             tmp+=tmpF;
+             System.out.println(tmp);
+             filePatsePath = new File(tmp);
+             if(fileCoppyPath.isFile()){
+                 try{
+                     FileUtils.copyFile(fileCoppyPath, filePatsePath); 
+                     loadTableWhenAction();
+                    }  
+                 catch (IOException e){
+                         System.out.println("Nope");
+                    }
+             }
+             else if(fileCoppyPath.isDirectory()){
+                 try{
+                     FileUtils.copyDirectory(fileCoppyPath, filePatsePath); 
+                     loadTableWhenAction();
+                    }  
+                 catch (IOException e){
+                         System.out.println("Nope");
+                    }
+             }
+         }
+         if(cut)
+         {
+            String stringClipboard = "..\\clipboard\\"+tmpF;
+            File Clipboard = new File(stringClipboard);
+            String pasteS = saveSelectedNode.toString();
+              tmpS = pasteS.split("\\\\");
+            String tmp = new String();
+            for (int i=0;i<tmpS.length;i++)
+            {
+                tmp += tmpS[i] + "\\\\" ;
+            }
+             tmp+=tmpF;
+             System.out.println(tmp);
+             filePatsePath = new File(tmp);
+             System.out.println(filePatsePath.toString());
+             System.out.println(Clipboard.toString());
+             if(Clipboard.isFile()){
+                 try{
+                     FileUtils.copyFile(Clipboard, filePatsePath); 
+                     loadTableWhenAction();
+                    }  
+                 catch (IOException e){
+                         System.out.println("Nope");
+                    }
+                    Clipboard.delete();
+             }
+             else if(Clipboard.isDirectory()){
+                 try{
+                     FileUtils.copyDirectory(Clipboard, filePatsePath); 
+                     loadTableWhenAction();
+                    }  
+                 catch (IOException e){
+                         System.out.println("Nope");
+                    }
+                 try{
+                     FileUtils.deleteDirectory(Clipboard);
+                 }
+                 catch (IOException e)
+                 {
+                   System.out.println("Nope");   
+                 }
+             } 
+             cut = false;
+         }
+
     }//GEN-LAST:event_btnPasteActionPerformed
 
     private void loadTableWhenAction()
@@ -479,6 +516,66 @@ public class MainForm extends javax.swing.JFrame {
 
     private void btnCutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCutActionPerformed
         // TODO add your handling code here:
+         //lấy node được chọn
+        DefaultMutableTreeNode selectedNode=(DefaultMutableTreeNode)Tree.getLastSelectedPathComponent();
+        //if(selectedNode!=null) 
+          selectedNode.removeAllChildren();
+      
+        java.io.File selectedFile =(java.io.File)selectedNode.getUserObject();
+        java.io.File[] paths = selectedFile.listFiles();
+        
+        DefaultTableModel model = (DefaultTableModel) Table.getModel();
+        int SelectedRowIndex = Table.getSelectedRow();
+        
+        fileCoppyPath = paths[SelectedRowIndex];
+          System.out.println(fileCoppyPath.toString());
+         
+        
+        tmpS = fileCoppyPath.toString().split("\\\\");
+        String tmp = new String();
+        for (int i=0;i<tmpS.length-1;i++)
+        {
+            tmp += tmpS[i] + "\\\\" ;
+        }
+        tmpF=tmpS[tmpS.length-1];
+        tmp+=tmpF;
+        System.out.println(tmp);
+        fileCoppyPath = new File(tmp);
+        String stringClipboard = "..\\clipboard\\"+tmpF;
+            File Clipboard = new File(stringClipboard);
+        if(fileCoppyPath.isFile())
+        {
+
+            try{
+                FileUtils.copyFile(fileCoppyPath, Clipboard);
+            }
+            catch (IOException e)
+            {
+                //Nope
+            }
+            fileCoppyPath.delete();
+            loadTableWhenAction();
+        }
+        else if(fileCoppyPath.isDirectory())
+        {
+
+            try{
+                FileUtils.copyDirectory(fileCoppyPath, Clipboard);
+            }
+            catch (IOException e)
+            {
+                //Nope
+            }
+             try{
+                 FileUtils.deleteDirectory(fileCoppyPath);
+                 loadTableWhenAction();
+            }
+            catch (IOException e)
+            {
+                //Nope
+            }
+        }
+        
         copy = false;
         cut = true;
     }//GEN-LAST:event_btnCutActionPerformed
