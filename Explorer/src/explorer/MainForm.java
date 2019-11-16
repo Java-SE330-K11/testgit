@@ -42,7 +42,7 @@ public class MainForm extends javax.swing.JFrame {
 
     String[] tmpS;
     String tmpF;
-    private boolean coppy = true;
+    private boolean copy = false;
     private boolean cut = false;
     private File fileCoppyPath;
     private File filePatsePath;
@@ -146,9 +146,9 @@ public class MainForm extends javax.swing.JFrame {
         btnCopy.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btnCopy.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         btnCopy.setMinimumSize(new java.awt.Dimension(70, 40));
-        btnCopy.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnCopyMouseClicked(evt);
+        btnCopy.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCopyActionPerformed(evt);
             }
         });
         jToolBar1.add(btnCopy);
@@ -160,6 +160,11 @@ public class MainForm extends javax.swing.JFrame {
         btnCut.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btnCut.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
         btnCut.setMinimumSize(new java.awt.Dimension(70, 40));
+        btnCut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCutActionPerformed(evt);
+            }
+        });
         jToolBar1.add(btnCut);
 
         btnPaste.setBackground(new java.awt.Color(255, 255, 255));
@@ -259,11 +264,6 @@ public class MainForm extends javax.swing.JFrame {
         Table.setGridColor(new java.awt.Color(255, 255, 255));
         Table.setRowHeight(22);
         Table.getTableHeader().setReorderingAllowed(false);
-        Table.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                TableMouseClicked(evt);
-            }
-        });
         jScrollPane2.setViewportView(Table);
 
         jSplitPane1.setRightComponent(jScrollPane2);
@@ -392,92 +392,96 @@ public class MainForm extends javax.swing.JFrame {
         Tree.expandPath(Tree.getLeadSelectionPath());
     }//GEN-LAST:event_TreeMouseClicked
 
-    private static void copyFileUsingApacheCommonsIO(File source, File dest) throws IOException {
-        FileUtils.copyFile(source, dest);
-    }
-    
-    public static void copyFolder(File src, File dest)
-    	throws IOException{
-    	
-    	if(src.isDirectory()){
-    		
-    		//if directory not exists, create it
-    		if(!dest.exists()){
-    		   dest.mkdir();
-    		   System.out.println("Directory copied from " 
-                              + src + "  to " + dest);
-    		}
-    		
-    		//list all the directory contents
-    		String files[] = src.list();
-    		
-    		for (String file : files) {
-    		   //construct the src and dest file structure
-    		   File srcFile = new File(src, file);
-    		   File destFile = new File(dest, file);
-    		   //recursive copy
-    		   copyFolder(srcFile,destFile);
-    		}
-    	   
-    	}else{
-    		//if file, then copy it
-    		//Use bytes stream to support all file types
-    		InputStream in = new FileInputStream(src);
-    	        OutputStream out = new FileOutputStream(dest); 
-    	                     
-    	        byte[] buffer = new byte[1024];
-    	    
-    	        int length;
-    	        //copy the file content in bytes 
-    	        while ((length = in.read(buffer)) > 0){
-    	    	   out.write(buffer, 0, length);
-    	        }
- 
-    	        in.close();
-    	        out.close();
-    	        System.out.println("File copied from " + src + " to " + dest);
-    	}
-    }
-    
-    private void btnCopyMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCopyMouseClicked
-        // TODO add your handling code here:
-        String tmp = saveSelectedNode.toString();
-        System.out.println(tmp);
-        String[] tmpS = tmp.split("\\");
-        tmpF = tmpS[tmpS.length-1];
-        fileCoppyPath = new File(tmp);
-        
-    }//GEN-LAST:event_btnCopyMouseClicked
 
+    
     private void btnPasteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPasteActionPerformed
         // TODO add your handling code here:
-         String tmp = saveSelectedNode.toString();
-         tmp = tmp +"\\"+tmpS;
-         filePatsePath = new File(tmp);
-         if(coppy) 
-         {
-             try{
-             copyFileUsingApacheCommonsIO(fileCoppyPath,filePatsePath);
-             }
-             catch (IOException e){
-                 System.out.println("Nope");
-             }
-         }
-//        File s1 = new File("D:\\Local1\\Test.docx");
-//        File s2 = new File("D:\\Local2\\Test.docx");
-//        try{
-//        FileUtils.copyFile(s1,s2);
-//        }
-//        catch (IOException e)
-//        {
-//            System.out.println("Nope");
-//        }
+//         if(copy)
+//         {
+//             String pasteS = saveSelectedNode.toString();
+//              tmpS = pasteS.split("\\\\");
+//            String tmp = new String();
+//            for (int i=0;i<tmpS.length;i++)
+//            {
+//                tmp += tmpS[i] + "\\\\" ;
+//            }
+//             tmp+=tmpF;
+//             System.out.println(tmp);
+//             filePatsePath = new File(tmp);
+//             if(fileCoppyPath.isFile()){
+//                 try{
+//                     FileUtils.copyFile(fileCoppyPath, filePatsePath); 
+//                     loadTableWhenAction();
+//                    }  
+//                 catch (IOException e){
+//                         System.out.println("Nope");
+//                    }
+//             }
+//             else if(fileCoppyPath.isDirectory()){
+//                 try{
+//                     FileUtils.copyDirectory(fileCoppyPath, filePatsePath); 
+//                     loadTableWhenAction();
+//                    }  
+//                 catch (IOException e){
+//                         System.out.println("Nope");
+//                    }
+//             }
+//         }
+        File s1 = new File("D:\\Local1\\Test.docx");
+        File s2 = new File("..\\clipboard\\Test.docx");
+        try{
+        FileUtils.copyFile(s1,s2);
+        }
+        catch (IOException e)
+        {
+            System.out.println("Nope");
+        }
     }//GEN-LAST:event_btnPasteActionPerformed
 
-    private void TableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableMouseClicked
-        // TODO add your handling code here:
+    private void loadTableWhenAction()
+    {
+        java.io.File selectedFile =(java.io.File)saveSelectedNode.getUserObject();
+        java.io.File[] paths=selectedFile.listFiles();
+        ShowInTable(paths);
+    }
+    
+    
+    private void btnCopyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCopyActionPerformed
+
+         //lấy node được chọn
+        DefaultMutableTreeNode selectedNode=(DefaultMutableTreeNode)Tree.getLastSelectedPathComponent();
+        //if(selectedNode!=null) 
+          selectedNode.removeAllChildren();
+      
+        java.io.File selectedFile =(java.io.File)selectedNode.getUserObject();
+        java.io.File[] paths = selectedFile.listFiles();
         
-    }//GEN-LAST:event_TableMouseClicked
+        DefaultTableModel model = (DefaultTableModel) Table.getModel();
+        int SelectedRowIndex = Table.getSelectedRow();
+        
+        fileCoppyPath = paths[SelectedRowIndex];
+          System.out.println(fileCoppyPath.toString());
+         
+        
+        tmpS = fileCoppyPath.toString().split("\\\\");
+        String tmp = new String();
+        for (int i=0;i<tmpS.length-1;i++)
+        {
+            tmp += tmpS[i] + "\\\\" ;
+        }
+        tmpF=tmpS[tmpS.length-1];
+        tmp+=tmpF;
+        System.out.println(tmp);
+        fileCoppyPath = new File(tmp);
+        copy = true;
+        cut = false;
+    }//GEN-LAST:event_btnCopyActionPerformed
+
+    private void btnCutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCutActionPerformed
+        // TODO add your handling code here:
+        copy = false;
+        cut = true;
+    }//GEN-LAST:event_btnCutActionPerformed
 
     
     void ShowInTable(File[] paths)
