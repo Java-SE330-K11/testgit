@@ -7,6 +7,7 @@ package explorer;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.datatransfer.Clipboard;
@@ -41,6 +42,7 @@ import javax.swing.tree.DefaultTreeSelectionModel;
  */
 public class MainForm extends javax.swing.JFrame {
 
+    //github
     String[] tmpS;
     String tmpF;
     private boolean copy = false;
@@ -265,6 +267,11 @@ public class MainForm extends javax.swing.JFrame {
         Table.setGridColor(new java.awt.Color(255, 255, 255));
         Table.setRowHeight(22);
         Table.getTableHeader().setReorderingAllowed(false);
+        Table.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                TableMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(Table);
 
         jSplitPane1.setRightComponent(jScrollPane2);
@@ -580,6 +587,38 @@ public class MainForm extends javax.swing.JFrame {
         cut = true;
     }//GEN-LAST:event_btnCutActionPerformed
 
+    private void TableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableMouseClicked
+        // TODO add your handling code here:
+       JTable source = (JTable)evt.getSource();
+            int row = source.rowAtPoint( evt.getPoint() );
+            int column = source.columnAtPoint( evt.getPoint() );
+            File s=(File)source.getModel().getValueAt(row, column);
+            if (evt.getClickCount() == 2 && source.getSelectedRow() != -1)
+            {
+                System.out.println(s);
+            /*System.out.println("row: "+row+" column: "+column);*/
+            Desktop desktop = Desktop.getDesktop();
+            try{
+                if(s.exists() && s.isFile()) desktop.open(s);
+                else
+                {
+                    DefaultTableModel tableModel=(DefaultTableModel) Table.getModel();
+                    while(tableModel.getRowCount() > 0)
+                        {
+                            tableModel.removeRow(0);
+                        }
+                    File[] paths=s.listFiles();
+                    ShowInTable(paths);
+                }
+            }
+                    
+                    catch(Exception ex)
+            {
+                
+            }
+            }
+    }//GEN-LAST:event_TableMouseClicked
+
     
     void ShowInTable(File[] paths)
     {
@@ -600,10 +639,9 @@ public class MainForm extends javax.swing.JFrame {
         for(int i=0;i<n;i++)
             if(paths[i].isDirectory())
             {
-                
-                Icon ic=FileSystemView.getFileSystemView().getSystemIcon(paths[i]);             
-                row[0]=paths[i].getName();
-                //System.out.println(paths[i]+"  "+saveSelectedNode.toString());
+                row[0]=paths[i];
+                Icon ic=FileSystemView.getFileSystemView().getSystemIcon(paths[i]);                
+                //row[0]=paths[i].getName();
                 Date d = new Date(paths[i].lastModified());
                 SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy   HH:mm:ss");
                 String strDate = formatter.format(d);
@@ -612,9 +650,10 @@ public class MainForm extends javax.swing.JFrame {
                 row[3]="N/A";
                 tableModel.addRow(row);
             }
-        for(int i=0;i<n;i++)
+        else
             if(paths[i].isFile())
             {
+                row[0]=paths[i];
                 //row[0]=paths[i].getName();
                 
                 Date d = new Date(paths[i].lastModified());
@@ -627,10 +666,11 @@ public class MainForm extends javax.swing.JFrame {
             }
         for(int i=0;i<n;i++)
         {
+            
             icons.put(i, FileSystemView.getFileSystemView().getSystemIcon(paths[i]));
             str.put(i,paths[i].getName());
-            /*String path=paths[i].getAbsolutePath();
-            System.out.println(path);*/
+            String path=paths[i].getName();
+            //System.out.println(path);
         }
         Table.getColumnModel().getColumn(0).setCellRenderer(new Render(icons,str));
     }
