@@ -28,12 +28,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileSystemView;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import org.apache.commons.io.FileUtils;
 import javax.swing.tree.DefaultTreeSelectionModel;
 /**
@@ -55,6 +58,39 @@ public class MainForm extends javax.swing.JFrame {
     private DefaultMutableTreeNode saveSelectedNode=null;
     public MainForm() {
         initComponents();
+        Tree.setCellRenderer(new TreeNodeRender());
+    }
+    class TreeNodeRender extends DefaultTreeCellRenderer{
+        private JLabel label;
+
+        TreeNodeRender() {
+            label = new JLabel();
+        }
+
+        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded,
+                                                      boolean leaf, int row, boolean hasFocus) {
+            super.getTreeCellRendererComponent(tree, value, leaf, expanded, leaf, row, hasFocus);
+            Object o = ((DefaultMutableTreeNode) value).getUserObject();
+            System.out.println("o :"+o);
+            JLabel label=new JLabel();
+            if (o instanceof File) {
+                File td = (File) o;
+                System.out.println(td.getAbsolutePath());
+                Icon ic=FileSystemView.getFileSystemView().getSystemIcon(td);
+                    label.setIcon(ic);
+                    if(td.getAbsolutePath().length()==3)
+                        label.setText(td.getAbsolutePath());
+                    else
+                    label.setText(td.getName());
+                }
+                
+            else {
+                //System.out.println("bi null");
+                label.setIcon(new ImageIcon("D:\\images.jpeg"));
+                label.setText("" + value);
+            }
+            return label;
+        }
     }
     class Render extends DefaultTableCellRenderer{
         Map<Integer,Icon> icons;
