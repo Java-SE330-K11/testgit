@@ -93,30 +93,30 @@ public class MainForm extends javax.swing.JFrame {
         }
     }
     class Render extends DefaultTableCellRenderer{
-        Map<Integer,Icon> icons;
-        Map<Integer,String> str;
-    public Render(Map<Integer,Icon> icons,Map<Integer,String> str) { 
-        this.icons=icons;
-        this.str=str;
-    }
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
-        {
-            super.getTableCellRendererComponent(table,value,isSelected,hasFocus,row,column);
-            this.setOpaque(true);
-            this.setIcon(icons.get(row));
-        this.setText(str.get(row));
-        this.setBackground(Color.WHITE);
-        if (isSelected)
-        {
-            setBackground(table.getSelectionBackground());
-        }
-        else
-        {
-            setBackground(table.getBackground());
-        }
-        return this;
-        }
+            Map<Integer,Icon> icons;
+            Map<Integer,String> str;
+            public Render(Map<Integer,Icon> icons,Map<Integer,String> str) { 
+                this.icons=icons;
+                this.str=str;
+            }
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
+            {
+                super.getTableCellRendererComponent(table,value,isSelected,hasFocus,row,column);
+                this.setOpaque(true);
+                this.setIcon(icons.get(row));
+                this.setText(str.get(row));
+                this.setBackground(Color.WHITE);
+                if (isSelected)
+                {
+                    setBackground(table.getSelectionBackground());
+                }
+                else
+                {
+                    setBackground(table.getBackground());
+                }
+                return this;
+            }
     }
 
     /**
