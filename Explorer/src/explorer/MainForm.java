@@ -67,28 +67,20 @@ public class MainForm extends javax.swing.JFrame {
             label = new JLabel();
         }
 
-        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded,
-                                                      boolean leaf, int row, boolean hasFocus) {
+        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
             super.getTreeCellRendererComponent(tree, value, leaf, expanded, leaf, row, hasFocus);
             Object o = ((DefaultMutableTreeNode) value).getUserObject();
-            System.out.println("o :"+o);
             JLabel label=new JLabel();
-            if (o instanceof File) {
-                File td = (File) o;
-                System.out.println(td.getAbsolutePath());
-                Icon ic=FileSystemView.getFileSystemView().getSystemIcon(td);
-                    label.setIcon(ic);
-                    if(td.getAbsolutePath().length()==3)
-                        label.setText(td.getAbsolutePath());
+            if (o instanceof String) {
+                String str = (String) o;
+                Icon ic=FileSystemView.getFileSystemView().getSystemIcon(new File(str));
+                label.setIcon(ic);                   
+                if(str.length()==3)
+                        label.setText(str);
                     else
-                    label.setText(td.getName());
+                        label.setText(new File(str).getName());
+                label.setIcon(ic);                   
                 }
-                
-            else {
-                //System.out.println("bi null");
-                label.setIcon(new ImageIcon("D:\\images.jpeg"));
-                label.setText("" + value);
-            }
             return label;
         }
     }
@@ -422,13 +414,14 @@ public class MainForm extends javax.swing.JFrame {
         //if(selectedNode!=null) 
           selectedNode.removeAllChildren();
       
-        java.io.File selectedFile =(java.io.File)selectedNode.getUserObject();
+        String pathStr=(String)selectedNode.getUserObject();//duong dan file dang duoc chon
+        java.io.File selectedFile =new File(pathStr);
         java.io.File[] paths=selectedFile.listFiles();
         DefaultTreeModel model=(DefaultTreeModel)Tree.getModel();
         for(File path:paths)
             if(path.isDirectory())
             {
-                selectedNode.add(new DefaultMutableTreeNode(path));
+                selectedNode.add(new DefaultMutableTreeNode(path.getAbsolutePath()));
             }
         ShowInTable(paths);
         saveSelectedNode=selectedNode;
@@ -658,7 +651,7 @@ public class MainForm extends javax.swing.JFrame {
     
     void ShowInTable(File[] paths)
     {
- 
+        int dem=0;
         Map<Integer,Icon> icons=new HashMap<Integer,Icon>();
         Map<Integer,String> str=new HashMap<Integer,String>();
         //Table.re
@@ -677,6 +670,9 @@ public class MainForm extends javax.swing.JFrame {
             {
                 row[0]=paths[i];
                 Icon ic=FileSystemView.getFileSystemView().getSystemIcon(paths[i]);                
+                icons.put(dem, FileSystemView.getFileSystemView().getSystemIcon(paths[i]));
+                str.put(dem,paths[i].getName());
+                dem++;                
                 //row[0]=paths[i].getName();
                 Date d = new Date(paths[i].lastModified());
                 SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy   HH:mm:ss");
@@ -686,12 +682,15 @@ public class MainForm extends javax.swing.JFrame {
                 row[3]="N/A";
                 tableModel.addRow(row);
             }
-        else
+        for(int i=0;i<n;i++)
             if(paths[i].isFile())
             {
                 row[0]=paths[i];
                 //row[0]=paths[i].getName();
-                
+                Icon ic=FileSystemView.getFileSystemView().getSystemIcon(paths[i]);
+                icons.put(dem, FileSystemView.getFileSystemView().getSystemIcon(paths[i]));
+                str.put(dem,paths[i].getName());
+                dem++;
                 Date d = new Date(paths[i].lastModified());
                 SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy   HH:mm:ss");
                 String strDate = formatter.format(d);
@@ -700,14 +699,15 @@ public class MainForm extends javax.swing.JFrame {
                 row[3]=paths[i].length()/1000+" KB";
                 tableModel.addRow(row);
             }
-        for(int i=0;i<n;i++)
+        
+        /*for(int i=0;i<n;i++)
         {
             
             icons.put(i, FileSystemView.getFileSystemView().getSystemIcon(paths[i]));
             str.put(i,paths[i].getName());
             String path=paths[i].getName();
             //System.out.println(path);
-        }
+        }*/
         Table.getColumnModel().getColumn(0).setCellRenderer(new Render(icons,str));
     }
     
@@ -720,8 +720,10 @@ public class MainForm extends javax.swing.JFrame {
       
         for(File path:paths)
         {
-                ThisPC.add(new DefaultMutableTreeNode(path));
-                model.reload();
+            String pathStr=path.getAbsolutePath();
+            ThisPC.add(new DefaultMutableTreeNode(pathStr));
+            //ThisPC.add(new DefaultMutableTreeNode(path));
+            model.reload();
         }
     }
     
